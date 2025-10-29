@@ -18,16 +18,26 @@ export default function SummarizerApp() {
     setSummary("");
 
     try {
-      const res = await fetch("http://localhost:5000/summarize", {
+      // fetch in client App.jsx
+      const res = await fetch("http://localhost:3000/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, mode }),
+        body: JSON.stringify({ text, mode })
       });
+
       const data = await res.json();
-      setSummary(data.summary || "No summary generated.");
+      
+      if (data.error) {
+        console.error("API Error:", data.error);
+        setSummary("Error: " + data.error);
+      } else if (data.notice) {
+        setSummary("Notice: " + data.notice);
+      } else {
+        setSummary(data.summary || "No summary generated.");
+      }
     } catch (err) {
-      console.error(err);
-      alert("Error generating summary!");
+      console.error("Fetch error:", err);
+      setSummary("Error connecting to the API. Please make sure the API server is running.");
     } finally {
       setLoading(false);
     }
@@ -43,9 +53,8 @@ export default function SummarizerApp() {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      } min-h-screen flex flex-col items-center p-6 transition-all duration-300`}
+      className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+        } min-h-screen flex flex-col items-center p-6 transition-all duration-300`}
     >
       {/* Header */}
       <div className="flex justify-between items-center w-full max-w-6xl mb-4">
@@ -65,11 +74,10 @@ export default function SummarizerApp() {
             <button
               key={opt}
               onClick={() => setMode(opt)}
-              className={`px-3 py-1 rounded-md capitalize ${
-                mode === opt
+              className={`px-3 py-1 rounded-md capitalize ${mode === opt
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
-              }`}
+                }`}
             >
               {opt}
             </button>
@@ -84,17 +92,15 @@ export default function SummarizerApp() {
       <div className="flex flex-col md:flex-row w-full max-w-6xl gap-6">
         {/* Input Box */}
         <div
-          className={`flex-1 p-4 rounded-lg shadow-md border border-gray-300 ${
-            darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-          }`}
+          className={`flex-1 p-4 rounded-lg shadow-md border border-gray-300 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+            }`}
         >
           <h2 className="text-lg font-semibold mb-2">Input Text</h2>
           <textarea
-            className={`w-full h-80 p-3 rounded-md resize-none outline-none border ${
-              darkMode
+            className={`w-full h-80 p-3 rounded-md resize-none outline-none border ${darkMode
                 ? "bg-gray-700 text-white border-gray-600"
                 : "bg-gray-100 text-gray-900 border-gray-300"
-            }`}
+              }`}
             placeholder="Paste or type your text here..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -110,9 +116,8 @@ export default function SummarizerApp() {
 
         {/* Output Box */}
         <div
-          className={`flex-1 p-4 rounded-lg shadow-md border border-gray-300 relative ${
-            darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-          }`}
+          className={`flex-1 p-4 rounded-lg shadow-md border border-gray-300 relative ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+            }`}
         >
           <h2 className="text-lg font-semibold mb-2 flex justify-between">
             Summary
@@ -126,11 +131,10 @@ export default function SummarizerApp() {
             )}
           </h2>
           <div
-            className={`h-80 p-3 rounded-md overflow-auto border ${
-              darkMode
+            className={`h-80 p-3 rounded-md overflow-auto border ${darkMode
                 ? "bg-gray-700 text-white border-gray-600"
                 : "bg-gray-100 text-gray-900 border-gray-300"
-            }`}
+              }`}
           >
             {loading ? (
               <p className="text-center text-gray-400 mt-32">Generating summary...</p>
