@@ -9,6 +9,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// For debugging
+console.log("HF_TOKEN available:", !!process.env.HF_TOKEN);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
