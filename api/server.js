@@ -35,7 +35,7 @@ app.post('/api', async (req, res) => {
     else if (mode === "medium") { min = 60; max = 120; }
     else if (mode === "long") { min = 100; max = 200; }
 
-    const HF_API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn";
+    const HF_API_URL = "https://router.huggingface.co/hf-inference/models/facebook/bart-large-cnn";
 
     const r = await fetch(HF_API_URL, {
       method: "POST",
@@ -60,6 +60,6 @@ app.post('/api', async (req, res) => {
     return res.status(200).json({ summary: data[0]?.summary_text || null });
   } catch (err) {
     console.error("Summarize error:", err);
-    return res.status(500).json({ error: "Summarization failed" });
+    return res.status(500).json({ error: "Summarization failed", dEventTargetils: err.message });
   }
 });
