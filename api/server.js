@@ -84,8 +84,8 @@ app.post('/api', async (req, res) => {
       chunks.push(words.slice(i, i + CHUNK_SIZE).join(" "));
     }
 
-    // Limit to first 4 chunks (around 3200 words / 20 mins of video) to respect free-tier API limits safely
-    const MAX_CHUNKS = 4;
+    // Drastically increased limits: Process up to 15 chunks (~12,000 words max) natively
+    const MAX_CHUNKS = 15;
     const processingChunks = chunks.slice(0, MAX_CHUNKS);
 
     let finalSummaries = [];
