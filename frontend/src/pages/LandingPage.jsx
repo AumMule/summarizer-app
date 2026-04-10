@@ -6,6 +6,21 @@ export default function LandingPage() {
 
   return (
     <div className="bg-[#0b0f19] text-white min-h-screen overflow-hidden">
+      {/* ================= NAVBAR ================= */}
+      <nav className="absolute top-0 w-full z-50 pt-10 px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="text-2xl font-mono tracking-widest text-gray-400 uppercase opacity-80">
+            shortify.
+          </div>
+          <button 
+            onClick={() => navigate("/app")}
+            className="text-sm font-medium text-white hover:text-gray-400 transition-colors flex items-center gap-2"
+          >
+            Launch Platform <span>&rarr;</span>
+          </button>
+        </div>
+      </nav>
+
       {/* ================= HERO ================= */}
       <section className="relative max-w-7xl mx-auto px-6 pt-32 pb-24">
         <Motion.h1
@@ -24,8 +39,8 @@ export default function LandingPage() {
           transition={{ delay: 0.3 }}
           className="mt-6 text-lg text-gray-300 max-w-xl"
         >
-          Paste any text. Choose summary length.  
-          Get clarity instantly — powered by real AI.
+          Paste long text, upload documents, or instantly extract<br/>
+          full YouTube videos. Powered by real AI.
         </Motion.p>
 
         <Motion.div
@@ -110,12 +125,14 @@ export default function LandingPage() {
 
       {/* ================= FEATURES ================= */}
       <section className="max-w-6xl mx-auto px-6 pb-32">
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {[
-            ["📏 Adjustable Length", "Short, medium, or long summaries"],
-            ["🌙 Dark Mode", "Distraction-free reading"],
-            ["⚡ Fast AI", "facebook/bart-large-cnn"],
-            ["📋 Copy Ready", "One-click copy"],
+            ["🎥 YouTube Ready", "Extract massive videos natively"],
+            ["🧠 Smart Chunking", "Bypass AI token limits securely"],
+            ["💾 History Cache", "Auto-saves past sessions"],
+            ["🔊 Text-to-Speech", "Browser audio dictation"],
+            ["📄 TXT Uploads", "Parse document files directly"],
+            ["🌙 Deep Dark UI", "Distraction-free aesthetics"],
           ].map(([title, desc], i) => (
             <Motion.div
               key={i}
@@ -138,8 +155,9 @@ export default function LandingPage() {
         <div className="bg-[#0f172a] border border-gray-700 rounded-xl p-6 font-mono text-sm text-gray-300 space-y-2">
           <p>Frontend → React + Tailwind</p>
           <p>Backend → Express API</p>
-          <p>Model → facebook/bart-large-cnn</p>
-          <p>UX → Word counts, modes, loading states</p>
+          <p>Model → facebook/bart-large-cnn & chunking algorithms</p>
+          <p>Extractors → Native youtube-transcript Web Scraper</p>
+          <p>UX → LocalStorage caching, Web Speech API dictation</p>
         </div>
       </section>
 

@@ -117,7 +117,8 @@ app.post('/api', async (req, res) => {
     return res.status(200).json({ 
       summary: resultSummary, 
       videoId,
-      originalWordCount: words.length
+      originalWordCount: words.length,
+      rawTranscript: processText
     });
 
   } catch (err) {

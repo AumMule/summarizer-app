@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Upload, Copy, Download, Volume2, VolumeX, History, Trash2, ChevronRight, Check, Video } from "lucide-react";
+import { Upload, Copy, Download, Volume2, VolumeX, History, Trash2, ChevronRight, Check, Video, FileText } from "lucide-react";
 
 export default function SummarizerApp() {
   const [text, setText] = useState("");
@@ -10,6 +10,8 @@ export default function SummarizerApp() {
   
   const [videoId, setVideoId] = useState(null);
   const [serverWordCount, setServerWordCount] = useState(0);
+  const [rawText, setRawText] = useState("");
+  const [showRaw, setShowRaw] = useState(false);
   
   // History state
   const [history, setHistory] = useState(() => {
@@ -48,6 +50,8 @@ export default function SummarizerApp() {
     setSummary("");
     setVideoId(null);
     setServerWordCount(0);
+    setRawText("");
+    setShowRaw(false);
     stopSpeaking();
 
     try {
@@ -66,6 +70,7 @@ export default function SummarizerApp() {
       setSummary(finalSummary);
       if (data.videoId) setVideoId(data.videoId);
       if (data.originalWordCount) setServerWordCount(data.originalWordCount);
+      if (data.rawTranscript) setRawText(data.rawTranscript);
       
       if (data.summary) {
         setHistory(prev => [{
@@ -91,9 +96,13 @@ export default function SummarizerApp() {
 
   const downloadTxt = () => {
     const element = document.createElement("a");
-    const file = new Blob([summary], {type: 'text/plain'});
+    const downloadContent = rawText && isYoutubeMode 
+      ? `=== RAW TRANSCRIPT ===\n\n${rawText}\n\n=== AI SUMMARY ===\n\n${summary}`
+      : summary;
+      
+    const file = new Blob([downloadContent], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "summary.txt";
+    element.download = isYoutubeMode ? "youtube-summary.txt" : "summary.txt";
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -182,7 +191,7 @@ export default function SummarizerApp() {
               </span>
             </button>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
-              Clarify <span className="text-blue-500 text-xl font-normal opacity-80">| AI Summarizer</span>
+              Shortify <span className="text-blue-500 text-xl font-normal opacity-80">| AI Summarizer</span>
             </h1>
           </div>
 
@@ -289,9 +298,9 @@ export default function SummarizerApp() {
                 </div>
               )}
 
-              <div className="bg-[#0f172a] border border-blue-900/50 rounded-2xl p-6 md:p-8 min-h-[150px] shadow-lg relative group">
+              <div className="bg-[#0f172a] border border-blue-900/50 rounded-2xl p-6 md:p-8 shadow-lg relative group transition-all">
                 {loading ? (
-                   <div className="flex flex-col gap-3">
+                   <div className="flex flex-col gap-3 min-h-[150px]">
                     <div className="flex items-center space-x-2 animate-pulse text-blue-400">
                       <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                       <div className="w-2 h-2 rounded-full bg-blue-500"></div>
@@ -305,7 +314,7 @@ export default function SummarizerApp() {
                     <p className="text-xl leading-relaxed text-gray-100 whitespace-pre-line font-medium selection:bg-blue-500/30">
                       {summary}
                     </p>
-                    
+
                     {/* Action Toolbar */}
                     <div className="absolute top-4 right-4 flex flex-col md:flex-row gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button onClick={toggleSpeak} className={`p-2 rounded-lg bg-gray-800 border transition cursor-pointer ${isSpeaking ? 'border-blue-500 text-blue-400' : 'border-gray-700 text-gray-300 hover:bg-gray-700'}`} title={isSpeaking ? "Stop speaking" : "Read aloud"}>
@@ -320,6 +329,25 @@ export default function SummarizerApp() {
                         <Download size={18} />
                       </button>
                     </div>
+
+                    {/* Full Transcript Toggler */}
+                    {rawText && isYoutubeMode && (
+                      <div className="mt-8 border-t border-blue-900/40 pt-4">
+                         <button 
+                            onClick={() => setShowRaw(!showRaw)}
+                            className="flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300 transition"
+                         >
+                            <FileText size={16} /> 
+                            {showRaw ? "Hide Full Transcript" : "View Full Transcript"}
+                         </button>
+
+                         {showRaw && (
+                            <div className="mt-4 p-5 bg-[#0b0f19] rounded-xl border border-blue-900/30 text-sm text-gray-400 leading-relaxed max-h-64 overflow-y-auto font-mono custom-scrollbar">
+                               {rawText}
+                            </div>
+                         )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
